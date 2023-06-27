@@ -1,23 +1,24 @@
 version: '3.8'
-
 services:
-  db:
-    container_name: postgres
-    image: postgres:14.0-alpine
+  postgres:
+    image: postgres:latest
     restart: always
     environment:
-      - POSTGRES_USER=${TYPEORM_USERNAME}
-      - POSTGRES_PASSWORD=${TYPEORM_PASSWORD}
-      - POSTGRES_DB=${TYPEORM_DATABASE}
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      POSTGRES_USER: ${TYPEORM_USERNAME}
+      POSTGRES_PASSWORD: ${TYPEORM_PASSWORD}
+      POSTGRES_DB: ${TYPEORM_DATABASE}
     ports:
-      - ${TYPEORM_PORT}:${TYPEORM_PORT}
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - ${PORT}:${PORT}
-  #   volumes:
-  #     - .:/app
+      - '${TYPEORM_PORT}:${TYPEORM_PORT}'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - '${PORT}:${PORT}'
+volumes:
+  postgres-data:
