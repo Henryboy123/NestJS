@@ -3,7 +3,8 @@ import { JwtMiddleware } from './common/middleware/jwt.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TaskModule } from './task/task.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppConfig, DatabaseConfig } from './config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -13,16 +14,17 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     TaskModule,
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.TYPEORM_HOST,
-      port: parseInt(<string>process.env.TYPEORM_PORT),
-      username: process.env.TYPEORM_USERNAME,
-      password: process.env.TYPEORM_PASSWORD,
-      database: process.env.TYPEORM_DATABASE,
-      autoLoadEntities: true,
-      synchronize: true,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      load: [AppConfig, DatabaseConfig],
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        ...configService.get('mydb'),
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AppController],

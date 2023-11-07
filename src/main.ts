@@ -7,7 +7,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
   await app.listen(process.env.PORT);
-  console.log('Server started on port: ', process.env.PORT);
+  console.log('Server started on port:', process.env.PORT);
 }
 
 bootstrap();
