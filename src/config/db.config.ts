@@ -8,8 +8,8 @@ export default registerAs('mydb', () => ({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   autoLoadEntities: true,
-  entities: [`./../**/*.entity{.ts,.js}`],
-  migrations: [`./../../db/migrations/*{.ts,.js}`],
+  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  migrations: [__dirname + '/migrations/*{.ts,.js}'],
   migrationsTableName: 'migrations',
   synchronize: true,
 }));
